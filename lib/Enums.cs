@@ -44,6 +44,7 @@
         Empty,
         Logo,
         Map,
+        MapEditor,
         UserInterface,
         MainMenu,
         GameMenu,

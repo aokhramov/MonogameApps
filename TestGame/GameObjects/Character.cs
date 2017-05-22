@@ -50,8 +50,6 @@
 
         public void Update(GameTime gameTime, MapEntry[,] map)
         {
-            if (ScreenManager.ActiveScreen != ScreenType.Map)
-                return;
 
             currentAnimationList = idle;
             
@@ -116,7 +114,7 @@
 
         public void Draw(GameTime gameTime)
         {
-            if (ScreenManager.ActiveScreen != ScreenType.Map || currentAnimationList == null)
+            if (currentAnimationList == null)
                 return;
             currentAnimationList.Draw(gameTime,Position);
         }

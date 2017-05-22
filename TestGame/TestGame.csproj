@@ -73,11 +73,13 @@
     <Compile Include="GameObjects\AliveObject.cs" />
     <Compile Include="GameObjects\Character.cs" />
     <Compile Include="GameObjects\Item.cs" />
+    <Compile Include="GameObjects\SpiritCharacter.cs" />
     <Compile Include="Managers\Camera.cs" />
     <Compile Include="Managers\GameManager.cs" />
     <Compile Include="Managers\InputManager.cs" />
     <Compile Include="Screens\Logo.cs" />
     <Compile Include="Screens\Map.cs" />
+    <Compile Include="Screens\MapEditor.cs" />
     <Compile Include="Screens\MapEditorMenu.cs" />
     <Compile Include="Screens\MapEntry.cs" />
     <Compile Include="Managers\SpriteList.cs" />

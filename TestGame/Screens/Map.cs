@@ -20,21 +20,21 @@
         public string MapName { get; set; }
 
         //дефолтная текстура для рисования
-        private Texture2D Default = TextureManager.GetTexture(TextureType.UI, "default");
+        protected Texture2D Default = TextureManager.GetTexture(TextureType.UI, "default");
         /// <summary>
         /// Отрисовка неба (цвет)
         /// </summary>
-        Rectangle Sky;
+        protected Rectangle Sky { get; set; }
         /// <summary>
         /// Задние фоны
         /// </summary>
-        Background background;
+        protected Background background { get; set; }
         /// <summary>
         /// Включить тени
         /// </summary>
-        public bool ShadowsEnable { get; private set; } = true;
+        public bool ShadowsEnable { get; protected set; } = true;
 
-        private int width;
+        protected int width;
         /// <summary>
         /// Ширина карты - количество столбцов
         /// </summary>
@@ -42,7 +42,7 @@
         {
             get { return width; }
         }
-        private int height;
+        protected int height;
         /// <summary>
         /// Высота карты - количество строк
         /// </summary>
@@ -67,7 +67,7 @@
         /// <summary>
         /// Пользовательский интерфейс
         /// </summary>
-        public UserInterface UInterface { get; private set; }
+        public UserInterface UInterface { get; protected set; }
 
         /// <summary>
         /// Предметы на уровне
@@ -79,14 +79,8 @@
         /// </summary>
         private GameMenu gameMenu { get; set; }
 
-        /// <summary>
-        /// Меню конструктора карты
-        /// </summary>
-        private MapEditorMenu mapEditorMenu { get; set; }
-
-
-        private bool widthInitiated = false;
-        private bool heightInitiated = false;
+        protected bool widthInitiated = false;
+        protected bool heightInitiated = false;
 
         public Map (string mapName)
         {
@@ -99,8 +93,6 @@
 
             gameMenu = new GameMenu();
             gameMenu.IsActive = false;
-            mapEditorMenu = new MapEditorMenu();
-            mapEditorMenu.IsActive = false;
 
             Items = new List<Item>();
 
@@ -258,54 +250,6 @@
 
         }
 
-        /// <summary>
-        /// Сохранение карты
-        /// </summary>
-        public void SaveMap ()
-        {
-            string Location = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            string path = string.Format("{0}{1}{2}.xml", Location, "\\Content\\Maps\\", MapName);
-            string str = "";
-            string a, b, c;
-
-            using (XmlWriter xmlWriter = XmlWriter.Create(path))
-            {
-                xmlWriter.WriteStartDocument();
-                xmlWriter.WriteStartElement("Map");
-                xmlWriter.WriteElementString("Width", Width.ToString());
-                xmlWriter.WriteElementString("Height", Height.ToString());
-                for (int i = 0; i < height; i++)
-                {
-                    xmlWriter.WriteStartElement("Row");
-
-                    for (int j = 0; j < width; j++)
-                    {
-                        a = map[i, j].CollideTextureType.ToString().Replace("None","");
-                        b = map[i, j].NonCollideTextureType.ToString().Replace("None", "");
-                        c = map[i, j].DecorateTextureType.ToString().Replace("None", "");
-
-                        str = string.Format("{0};{1};{2}", a, b, c);
-                        xmlWriter.WriteElementString("Cell", str);
-                    }
-
-                    xmlWriter.WriteEndElement();
-                }
-
-                foreach(Item item in Items)
-                {
-                    xmlWriter.WriteStartElement("Item");
-                    xmlWriter.WriteElementString("ItemType", item.Type.ToString());
-                    xmlWriter.WriteElementString("Item_X", item.Position.X.ToString());
-                    xmlWriter.WriteElementString("Item_Y", item.Position.Y.ToString());
-                    xmlWriter.WriteEndElement();
-                }
-
-                xmlWriter.WriteEndElement();
-                xmlWriter.WriteEndDocument();
-            }
-        }
-
-
         public override void ProcessingOfClicks(GameTime gameTime, Camera camera)
         {
             if (!IsActive)
@@ -318,22 +262,17 @@
 
             if (InputManager.IsNewPressed(Keys.Escape))
             {
-                mapEditorMenu.IsActive = true;
+                gameMenu.IsActive = true;
             }
-            mapEditorMenu.ProcessingOfClicks(gameTime, camera);
-            if(mapEditorMenu.Save)
-            {
-                mapEditorMenu.Save = false;
-                SaveMap();
-            }
+
+            gameMenu.ProcessingOfClicks(gameTime, camera);
 
             //тыкнули за границы окна - выводим меню
             if (!ScreenManager.SpriteBatch.GraphicsDevice.Viewport.Bounds.Contains(new Point(InputManager.MouseStates.Position.X, InputManager.MouseStates.Position.Y))
                 && InputManager.IsPressedAnyMouseButton())
-                mapEditorMenu.IsActive = true;
+                gameMenu.IsActive = true;
 
-            if (InputManager.IsNewLeftMouseButtonPressed() || 
-                (InputManager.MouseStates.LeftButton == ButtonState.Pressed && InputManager.IsPressed(Keys.LeftShift)))
+            if (InputManager.IsNewLeftMouseButtonPressed())
             {
                 int y = (int)((camera.Position.Y + InputManager.MouseStates.Y / camera.CameraMultiplier) / TextureManager.TileSize);
                 int x = (int)((camera.Position.X + InputManager.MouseStates.X / camera.CameraMultiplier) / TextureManager.TileSize);
@@ -356,11 +295,6 @@
             if (!IsActive)
                 return;
 
-            if(mapEditorMenu.IsActive)
-            {
-                mapEditorMenu.Update(gameTime, camera);
-                return;
-            }
             if(gameMenu.IsActive)
             { 
                 gameMenu.Update(gameTime, camera);
@@ -404,9 +338,6 @@
         /// <param name="y">Адрес ячейки. Строка</param>
         public void SetTexture (MapEntryTextureType mapEntryTexture, int x, int y)
         {
-            if (ScreenManager.ActiveScreen != ScreenType.Map)
-                return;
-
             map[y, x].ChangeType(mapEntryTexture);
             map[y, x].Refresh = true;
         }
@@ -499,7 +430,7 @@
         /// </summary>
         /// <param name="y">Адрес ячейки. Строка</param>
         /// <param name="x">Адрес ячейки. Столбец</param>
-        private void UpdateTile(int y, int x)
+        protected void UpdateTile(int y, int x)
         {
             if (x < 0 || x >= Width || y < 0 || y >= Height)
                 return;
@@ -597,7 +528,6 @@
 
             UInterface.Draw(gameTime, camera);
 
-            mapEditorMenu.Draw(gameTime, camera);
             gameMenu.Draw(gameTime, camera);
 
             base.Draw(gameTime, camera);

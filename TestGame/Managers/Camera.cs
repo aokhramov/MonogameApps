@@ -10,9 +10,13 @@
         /// </summary>
         public AliveObject BindedObject { get; private set; }
 
+        //стандартно движемся за этим объектом
+        private SpiritCharacter Spirit { get; set; }
+
         private Vector2 screenCenter;
         private Vector2 lastBindedObjectPosition;
         private float lastCameraMultiply;
+
         /// <summary>
         /// Зум камеры
         /// </summary>
@@ -26,18 +30,24 @@
         // TODO: доделать. Изменение объекта за которым движется камера. плавность переключения
         public Camera(int width, int height)
         {
+            Spirit = new SpiritCharacter(new Vector2(0,0));
+            BindedObject = Spirit;
+
             ChangeScreenSize(width, height);
         }
 
         /// <summary>
         /// Обновляем камеру
         /// </summary>
-        public void Update()
+        public void Update(GameTime gameTime)
         {
             if (_width != ScreenManager.Width || _height != ScreenManager.Height)
                 ChangeScreenSize(ScreenManager.Width, ScreenManager.Height);
 
-            if(BindedObject != null && (lastBindedObjectPosition != BindedObject.Position || lastCameraMultiply != CameraMultiplier))
+            if (BindedObject == Spirit)
+                Spirit.Update(gameTime);
+
+            if (BindedObject != null && (lastBindedObjectPosition != BindedObject.Position || lastCameraMultiply != CameraMultiplier))
             {
                 if (lastCameraMultiply != CameraMultiplier)
                     lastCameraMultiply = CameraMultiplier;
@@ -64,6 +74,7 @@
                 TextureManager.ChangeCountTiles((int)width, (int)height);
             }
         }
+
         /// <summary>
         /// Обновляем матрицу отображения камеры при изменении расширения окна
         /// </summary>
@@ -77,38 +88,41 @@
             screenCenter.Y = height / 2;
             UpdateViewMatrix();
         }
+
         /// <summary>
         /// Привязываем камеру к "живому" объекту
         /// </summary>
         /// <param name="obj">Объект</param>
         public void Tracking(AliveObject obj)
         {
-            BindedObject = obj;
+            if(BindedObject != obj)
+                BindedObject = obj;
         }
+
         /// <summary>
         /// Отвязываем камеру от объекта
         /// </summary>
         public void DisableTracking()
         {
-            BindedObject = null;
+            if(BindedObject != Spirit)
+                BindedObject = Spirit;
         }
+
         /// <summary>
         /// Обновляем матрицу отображения
         /// </summary>
         private void UpdateViewMatrix()
         {
             if (BindedObject != null)
-            { 
-                ScreenManager.viewMatrix = Matrix.CreateTranslation(new Vector3(screenCenter.X/CameraMultiplier - BindedObject.Position.X, 
-                    screenCenter.Y/CameraMultiplier - BindedObject.Position.Y, 0.0f)) *
+            {
+                ScreenManager.viewMatrix = Matrix.CreateTranslation(new Vector3(screenCenter.X / CameraMultiplier - BindedObject.Position.X,
+                    screenCenter.Y / CameraMultiplier - BindedObject.Position.Y, 0.0f)) *
                     Matrix.CreateRotationZ(0f) *
                     Matrix.CreateScale(CameraMultiplier, CameraMultiplier, 1.0f) *
                     Matrix.CreateTranslation(new Vector3(Vector2.Zero, 0.0f));
 
-                Position = new Vector2( BindedObject.Position.X - (_width/CameraMultiplier/2),  BindedObject.Position.Y - (_height/CameraMultiplier/2));
+                Position = new Vector2(BindedObject.Position.X - (_width / CameraMultiplier / 2), BindedObject.Position.Y - (_height / CameraMultiplier / 2));
             }
-            else
-                ScreenManager.viewMatrix = Matrix.CreateTranslation(0.0f, 0.0f, 0.0f);
         }
     }
 }

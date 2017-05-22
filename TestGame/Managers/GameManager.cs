@@ -10,7 +10,7 @@
         //TODO убрать нагромаждения отсюда в item, aliveobject и screenmanager
         public MainMenu mainMenu;
 
-        public Map level;
+        public MapEditor level;
         public Camera camera;
 
         public Texture2D frame;
@@ -26,10 +26,10 @@
             mainMenu = new MainMenu();
             
             //отображаем карту сразу
-            ScreenManager.ActiveScreen = ScreenType.Map;
+            ScreenManager.ActiveScreen = ScreenType.MapEditor;
             //Главное меню пока отображает чушь
 
-            level = new Map("TestMap");
+            level = new MapEditor("TestMap");
             camera = new Camera(ScreenManager.Width,ScreenManager.Height);
             
             camera.Tracking(level.Player);
@@ -43,8 +43,7 @@
         {
             InputManager.Update();
 
-            camera.Update();
-            //level.Update(gameTime, camera);
+            camera.Update(gameTime);
             i++;
 
             if (i > 100 && i < 5000)
