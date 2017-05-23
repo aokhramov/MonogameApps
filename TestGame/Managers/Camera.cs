@@ -30,7 +30,7 @@
         // TODO: доделать. Изменение объекта за которым движется камера. плавность переключения
         public Camera(int width, int height)
         {
-            Spirit = new SpiritCharacter(new Vector2(0,0));
+            Spirit = new SpiritCharacter(new Vector2(200,2000));
             BindedObject = Spirit;
 
             ChangeScreenSize(width, height);

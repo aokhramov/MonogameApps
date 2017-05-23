@@ -17,7 +17,6 @@
         public bool ShadowsEnable { get; set; } = true;
 
         public UIBuildingStocks BuildingStocks { get; set; }
-        int _fps = 0;
 
         public UserInterface()
         {
@@ -71,15 +70,13 @@
             if (!IsActive)
                 return;
 
-            _fps = (int)(1 / (float)gameTime.ElapsedGameTime.TotalSeconds);
-
-            label.Font.Text = string.Format("Левая кнопка мыши - рисуем ( по одному). + Левый шифт - быстрое рисование");
+            label.Font.Text = string.Format("Left Mouse Button - Draw");
             label.Update(gameTime);
 
-            label2.Font.Text = string.Format("Правая кнопка мыши - МАТЕРИАЛЫ. Камера {0} / {1}", camera.Position.X, camera.Position.Y);
+            label2.Font.Text = string.Format("Right Mouse Button - Texture to draw. Cam position {0} / {1}", camera.Position.X, camera.Position.Y);
             label2.Update(gameTime);
 
-            label3.Font.Text = string.Format("ФПС = {0} {1}", _fps, State);
+            label3.Font.Text = string.Format("Mouse Scroll - Zoom. Move - WASD. {0}", State);
             label3.Update(gameTime);
 
             if (InputManager.MouseStates.RightButton == ButtonState.Pressed)

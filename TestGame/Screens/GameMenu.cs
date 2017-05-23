@@ -11,37 +11,34 @@
         private List<UIButton> menuEntries = new List<UIButton>();
         private Vector2 positionOffset;
         public Vector2 Position { get; set; }
+        private int _width = 400;
 
         public GameMenu() : base ()
         {
-            UIButton returnGame = new UIButton(new UIFont("Продолжить"));
-            UIButton saveGame = new UIButton(new UIFont("Сохранить игру"));
-            UIButton loadGame = new UIButton(new UIFont("Загрузить игру"));
-            UIButton gameOptions = new UIButton(new UIFont("Настройки"));
-            UIButton exitGame = new UIButton(new UIFont("Выйти"));
+            menuEntries.Add(new UIButton(new UIFont("Продолжить / Return")));
+            menuEntries[menuEntries.Count - 1].Click += ReturnGame;
 
-            returnGame.Click += ReturnGame;
-            saveGame.Click += SaveGame;
-            loadGame.Click += LoadGame;
-            gameOptions.Click += GameOptions;
-            exitGame.Click += ExitGame;
-            returnGame.Font.Color = Color.Wheat;
-            returnGame.Font.Type = FontType.RegularWithBorder;
+            //menuEntries.Add(new UIButton(new UIFont("Сохранить игру")));
+            //menuEntries[menuEntries.Count - 1].Click += SaveGame;
 
-            returnGame.Width = 300;
-            saveGame.Width = 300;
-            loadGame.Width = 300;
-            gameOptions.Width = 300;
-            exitGame.Width = 300;
+            //menuEntries.Add(new UIButton(new UIFont("Загрузить игру")));
+            //menuEntries[menuEntries.Count - 1].Click += LoadGame;
 
-            menuEntries.Add(returnGame);
-            menuEntries.Add(saveGame);
-            menuEntries.Add(loadGame);
-            menuEntries.Add(gameOptions);
-            menuEntries.Add(exitGame);
+            menuEntries.Add(new UIButton(new UIFont("Настройки / Options")));
+            menuEntries[menuEntries.Count - 1].Click += GameOptions;
+
+            menuEntries.Add(new UIButton(new UIFont("Выйти в главное меню / Main Menu")));
+            menuEntries[menuEntries.Count - 1].Click += Exit;
 
             ScreenType = ScreenType.GameMenu;
-            Position = new Vector2(500, 200);
+
+            foreach (UIButton button in menuEntries)
+            {
+                button.Width = _width;
+                button.Color = Color.BlueViolet;
+                button.Font.Color = Color.AntiqueWhite;
+                button.Font.Type = FontType.RegularWithShadow;
+            }
             positionOffset = new Vector2(0, 50);
 
             //ScreenManager.AddScreen(this);
@@ -64,9 +61,13 @@
             if (!IsActive)
                 return;
 
+            Position = new Vector2(ScreenManager.Width / 2 - _width / 2, ScreenManager.Height /2 - menuEntries.Count * 30);
+            Vector2 pos = Position;
             foreach (UIButton button in menuEntries)
             {
+                button.Position = pos;
                 button.Update(gameTime);
+                pos += positionOffset;
             }
             base.Update(gameTime, camera);
         }
@@ -76,12 +77,9 @@
             if (!IsActive)
                 return;
 
-            Vector2 pos = Position;
-            foreach (UIButton mEntry in menuEntries)
+            foreach (UIButton button in menuEntries)
             {
-                mEntry.Position = pos;
-                mEntry.Draw(gameTime);
-                pos += positionOffset;
+                button.Draw(gameTime);
             }
             base.Draw(gameTime, camera);
         }
@@ -92,22 +90,15 @@
             System.Console.WriteLine("return game click event");
             IsActive = false;
         }
-        private void SaveGame(object sender)
-        {
-            System.Console.WriteLine("save game click event");
-        }
-        private void LoadGame(object sender)
-        {
-            System.Console.WriteLine("load game click event");
-        }
+
         private void GameOptions(object sender)
         {
-            System.Console.WriteLine("game options click event");
+            System.Console.WriteLine("TODO gameoptions");
         }
-        private void ExitGame(object sender)
+
+        private void Exit(object sender)
         {
-            System.Console.WriteLine("exit game click event");
-            ScreenManager.InitiateGameExitMode = true;
+            ScreenManager.ActiveScreen = ScreenType.MainMenu;
         }
     }
 }

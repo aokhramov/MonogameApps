@@ -11,46 +11,33 @@
         private List<UIButton> menuEntries = new List<UIButton>();
         private Vector2 positionOffset;
         public Vector2 Position { get; set; }
-        
+        private int _width = 400;
+
         public MainMenu() : base()
         {
-            UIButton newGame = new UIButton(new UIFont("Новая игра"));
-            UIButton loadGame = new UIButton(new UIFont("Загрузить игру"));
-            UIButton gameOptions = new UIButton(new UIFont("Настройки"));
-            UIButton exitGame = new UIButton(new UIFont("Выйти"));
-            
-            newGame.Click += NewGame;
-            loadGame.Click += LoadGame;
-            gameOptions.Click += GameOptions;
-            exitGame.Click += ExitGame;
+            menuEntries.Add(new UIButton(new UIFont("Загрузить карту / Load Map")));
+            menuEntries[menuEntries.Count - 1].Click += LoadMap;
 
-            newGame.Font.Color = Color.MediumVioletRed;
-            gameOptions.Font.Type = FontType.RegularWithShadow;
-            gameOptions.Font.Color = Color.White;
-            loadGame.Font.Type = FontType.RegularWithBorder;
-            loadGame.Font.Color = Color.SpringGreen;
+            menuEntries.Add(new UIButton(new UIFont("Редактор карт / Map Editor")));
+            menuEntries[menuEntries.Count - 1].Click += MapEditor;
 
-            newGame.Width = 300;
-            loadGame.Width = 300;
-            gameOptions.Width = 300;
-            exitGame.Width = 300;
-            exitGame.Font.Type = FontType.RegularWithShadow;
-            
+            menuEntries.Add(new UIButton(new UIFont("Настройки / Options")));
+            menuEntries[menuEntries.Count - 1].Click += GameOptions;
 
-            newGame.Color = Color.Wheat;
-            loadGame.Color = Color.Wheat;
-            gameOptions.Color = Color.Wheat;
-            exitGame.Font.Color = Color.CornflowerBlue;
-            menuEntries.Add(newGame);
-            menuEntries.Add(loadGame);
-            menuEntries.Add(gameOptions);
-            menuEntries.Add(exitGame);
+            menuEntries.Add(new UIButton(new UIFont("Выход / Exit")));
+            menuEntries[menuEntries.Count - 1].Click += ExitGame;
+
 
             ScreenType = ScreenType.MainMenu;
-            Position = new Vector2(500, 200);
+
+            foreach (UIButton button in menuEntries)
+            {
+                button.Width = _width;
+                button.Color = Color.BlueViolet;
+                button.Font.Color = Color.AntiqueWhite;
+                button.Font.Type = FontType.RegularWithShadow;
+            }
             positionOffset = new Vector2(0, 50);
-            
-            //ScreenManager.AddScreen(this);
         }
 
         public override void ProcessingOfClicks(GameTime gameTime, Camera camera)
@@ -70,9 +57,13 @@
             if (!IsActive)
                 return;
 
+            Position = new Vector2(ScreenManager.Width / 2 - _width / 2, ScreenManager.Height / 2 - menuEntries.Count * 30);
+            Vector2 pos = Position;
             foreach (UIButton button in menuEntries)
             {
+                button.Position = pos;
                 button.Update(gameTime);
+                pos += positionOffset;
             }
         }
 
@@ -81,32 +72,30 @@
             if (!IsActive)
                 return;
 
-            Vector2 pos = Position;
-            foreach (UIButton mEntry in menuEntries)
+            foreach (UIButton button in menuEntries)
             {
-                mEntry.Position = pos;
-                mEntry.Draw(gameTime);
-                pos += positionOffset;
+                button.Draw(gameTime);
             }
         }
 
         // TODO: доделать главное меню
-        private void NewGame(object sender)
+        private void LoadMap(object sender)
         {
-            System.Console.WriteLine("new game click event");
             ScreenManager.ActiveScreen = ScreenType.Map;
         }
-        private void LoadGame(object sender)
+
+        private void MapEditor(object sender)
         {
-            System.Console.WriteLine("load game click event");
+            ScreenManager.ActiveScreen = ScreenType.MapEditor;
         }
+
         private void GameOptions(object sender)
         {
-            System.Console.WriteLine("game options click event");
+            System.Console.WriteLine("TODO game options");
         }
+
         private void ExitGame(object sender)
         {
-            System.Console.WriteLine("exit game click event");
             ScreenManager.InitiateGameExitMode = true;
         }
     }

@@ -3,7 +3,6 @@
     using Microsoft.Xna.Framework;
     using Microsoft.Xna.Framework.Graphics;
     using Microsoft.Xna.Framework.Content;
-    using Microsoft.Xna.Framework.Input;
     using System.Collections.Generic;
     using Screens;
     using System;
@@ -110,7 +109,6 @@
             {
                 if (screen.ScreenType == ActiveScreen)
                 { 
-                    //screen.ProcessingOfClicks(gameTime, camera);
                     screen.Update(gameTime, camera);
                 }
             }
@@ -126,14 +124,6 @@
             {
                 if (screen.ScreenType == ActiveScreen)
                 {
-                    //if (ActiveScreen == ScreenType.MapEditorMenu)
-                    //{
-                    //    foreach (Screen MapScreen in Screens)
-                    //        if (MapScreen.ScreenType == ScreenType.Map)
-                    //        {
-                    //            MapScreen.Draw(gameTime, camera);
-                    //        }
-                    //}
                     screen.Draw(gameTime, camera);
                 }
             }

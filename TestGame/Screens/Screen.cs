@@ -15,7 +15,7 @@
         /// <summary>
         /// Обрабатывать клики по экрану в текущем цикле? 
         /// </summary>
-        public bool NeedClicksProcessing { get; set; }
+        public bool NeedClicksProcessing { get; set; } = true;
 
         /// <summary>
         /// В текущем цикле на данном экране клик обработан?

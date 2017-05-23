@@ -11,30 +11,31 @@
         private List<UIButton> menuEntries = new List<UIButton>();
         private Vector2 positionOffset;
         public Vector2 Position { get; set; }
-
+        private int _width = 400;
         public bool Save { get; set; } = false;
 
         public MapEditorMenu() : base ()
         {
-            menuEntries.Add(new UIButton(new UIFont("Продолжить")));
-            menuEntries[0].Click += Return;
+            menuEntries.Add(new UIButton(new UIFont("Продолжить / Return")));
+            menuEntries[menuEntries.Count - 1].Click += Return;
 
-            menuEntries.Add(new UIButton(new UIFont("Сохранить карту")));
-            menuEntries[1].Click += SaveMap;
+            menuEntries.Add(new UIButton(new UIFont("Сохранить карту / Save Map")));
+            menuEntries[menuEntries.Count - 1].Click += SaveMap;
 
-            menuEntries.Add(new UIButton(new UIFont("Выход")));
-            menuEntries[2].Click += CloseMapEditor;
+            menuEntries.Add(new UIButton(new UIFont("Выйти в главное меню / Main Menu")));
+            menuEntries[menuEntries.Count - 1].Click += CloseMapEditor;
 
             ScreenType = ScreenType.MapEditorMenu;
-            Position = new Vector2(500, 200);
-            positionOffset = new Vector2(0, 50);
+
             foreach ( UIButton button in menuEntries)
             {
-                button.Width = 300;
+                button.Width = _width;
                 button.Color = Color.BlueViolet;
                 button.Font.Color = Color.AntiqueWhite;
                 button.Font.Type = FontType.RegularWithShadow;
             }
+
+            positionOffset = new Vector2(0, 50);
         }
 
         public override void ProcessingOfClicks(GameTime gameTime, Camera camera)
@@ -54,6 +55,7 @@
             if (!IsActive)
                 return;
 
+            Position = new Vector2(ScreenManager.Width / 2 - _width / 2, ScreenManager.Height /2 - menuEntries.Count * 30);
             Vector2 pos = Position;
             foreach (UIButton button in menuEntries)
             {
@@ -91,8 +93,7 @@
 
         private void CloseMapEditor(object sender)
         {
-            System.Console.WriteLine("close mapeditor event");
-            ScreenManager.InitiateGameExitMode = true;
+            ScreenManager.ActiveScreen = ScreenType.MainMenu;
         }
     }
 }
